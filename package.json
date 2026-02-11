@@ -1,5 +1,5 @@
 {
-  "name": "dnsmasq-admin-pro",
+  "name": "dnsmasq-admin-pro-(containerized)",
   "private": true,
   "version": "0.0.0",
   "type": "module",

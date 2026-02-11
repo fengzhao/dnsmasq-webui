@@ -1,6 +1,6 @@
 {
-  "name": " Dnsmasq Admin Pro",
-  "description": "基于 Go 语言后端的高性能 dnsmasq 管理面板。支持实时服务控制、配置文件编辑与 AI 智能建议。",
+  "name": "Dnsmasq Admin Pro (Containerized)",
+  "description": "基于侧车模式设计的双容器管理方案。支持跨容器配置热重载与 Docker 容器重启控制。",
   "requestFramePermissions": [
     "camera",
     "microphone"

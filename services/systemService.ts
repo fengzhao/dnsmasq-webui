@@ -8,6 +8,8 @@ export interface SystemStatus {
   memory: number;
   pid: number;
   connected: boolean;
+  mode: 'container' | 'host' | 'docker-remote';
+  target_container?: string;
 }
 
 export const SystemService = {
@@ -58,7 +60,8 @@ export const SystemService = {
         cpu: 0,
         memory: 0,
         pid: 0,
-        connected: false
+        connected: false,
+        mode: 'host'
       };
     }
   }

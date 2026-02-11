@@ -1,0 +1,40 @@
+
+services:
+  # 1. Dnsmasq 核心服务
+  dnsmasq-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dnsmasq
+    container_name: dnsmasq_service
+    # 映射 DNS 端口到宿主机
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    volumes:
+      # 挂载配置文件，以便管理面板修改后 Dnsmasq 能读到
+      - ./dnsmasq.conf:/etc/dnsmasq.conf
+    restart: always
+
+  # 2. Web 管理面板
+  dnsmasq-admin:
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+    container_name: dnsmasq_admin
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=:3000
+      - DNSMASQ_CONF=/etc/dnsmasq.conf
+      # 核心配置：指定要重启的目标容器名称
+      - DOCKER_RESTART_TARGET=dnsmasq_service
+      # 注入 Gemini API 密钥
+      - API_KEY=${API_KEY}
+    volumes:
+      # 共享同一个配置文件
+      - ./dnsmasq.conf:/etc/dnsmasq.conf
+      # 挂载 Docker Socket，允许管理面板容器重启 dnsmasq-service 容器
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - dnsmasq-service
+    restart: always
