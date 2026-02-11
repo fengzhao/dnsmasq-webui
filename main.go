@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-//go:embed index.html *.tsx components/*.tsx services/*.ts types.ts translations.ts
+//go:embed index.html index.tsx *.ts types.ts translations.ts components/*.tsx services/*.ts
 var staticFiles embed.FS
 
 var (
@@ -50,6 +50,7 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
+// 通过 Docker Unix Socket 重启指定的容器
 func restartDockerContainer(containerName string) error {
 	dialer := net.Dialer{Timeout: 5 * time.Second}
 	httpClient := http.Client{
@@ -73,19 +74,14 @@ func restartDockerContainer(containerName string) error {
 }
 
 func handleStatus(w http.ResponseWriter, r *http.Request) {
-	isActive := true
-	mode := "host"
-	if DockerRestartTarget != "" {
-		mode = "docker-remote"
-	}
 	resp := StatusResponse{
-		Active:          isActive,
+		Active:          true,
 		Uptime:          "Running",
-		CPU:             0.2,
-		Memory:          42.5,
+		CPU:             0.5,
+		Memory:          48.2,
 		PID:             os.Getpid(),
 		Connected:       true,
-		Mode:            mode,
+		Mode:            "docker-remote",
 		TargetContainer: DockerRestartTarget,
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -93,14 +89,22 @@ func handleStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleConfig(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	if r.Method == http.MethodGet {
+		content, err := os.ReadFile(ConfigPath)
+		if err != nil {
+			http.Error(w, "Failed to read config", 500)
+			return
+		}
+		w.Write(content)
 		return
 	}
-	body, _ := io.ReadAll(r.Body)
-	err := os.WriteFile(ConfigPath, body, 0644)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Response{Success: err == nil})
+
+	if r.Method == http.MethodPost {
+		body, _ := io.ReadAll(r.Body)
+		err := os.WriteFile(ConfigPath, body, 0644)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(Response{Success: err == nil})
+	}
 }
 
 func handleRestart(w http.ResponseWriter, r *http.Request) {
@@ -117,8 +121,11 @@ func handleTestConfig(w http.ResponseWriter, r *http.Request) {
 	tmpFile := "/tmp/dnsmasq_test.conf"
 	os.WriteFile(tmpFile, body, 0644)
 	defer os.Remove(tmpFile)
+
+	// 使用本地安装的 dnsmasq 进行语法测试
 	cmd := exec.Command(DnsmasqBin, "--test", "--conf-file="+tmpFile)
 	output, err := cmd.CombinedOutput()
+	
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"valid": err == nil,
@@ -128,23 +135,44 @@ func handleTestConfig(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	mux := http.NewServeMux()
+	
+	// API 路由
 	mux.HandleFunc("/api/status", handleStatus)
 	mux.HandleFunc("/api/restart", handleRestart)
 	mux.HandleFunc("/api/config", handleConfig)
 	mux.HandleFunc("/api/test-config", handleTestConfig)
 
-	// 使用静态文件系统服务前端
+	// 静态资源路由
 	contentStatic, _ := fs.Sub(staticFiles, ".")
 	fileServer := http.FileServer(http.FS(contentStatic))
 
 	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// API 请求不经过此路由
 		if strings.HasPrefix(r.URL.Path, "/api") {
 			return
 		}
-		// 所有的资源请求均通过嵌入的 FS 提供
+
+		// 处理 React/ESM 路由：如果请求的是特定 TSX 文件，确保 MIME 类型正确（某些浏览器需要）
+		if strings.HasSuffix(r.URL.Path, ".tsx") {
+			w.Header().Set("Content-Type", "application/javascript")
+		}
+		if strings.HasSuffix(r.URL.Path, ".ts") {
+			w.Header().Set("Content-Type", "application/javascript")
+		}
+
 		fileServer.ServeHTTP(w, r)
 	}))
 
-	log.Printf("Dnsmasq Admin Pro (Embedded) started on %s\n", Port)
-	log.Fatal(http.ListenAndServe(Port, mux))
+	log.Printf("Dnsmasq Admin Pro 启动成功！监听端口 %s\n", Port)
+	log.Printf("管理配置文件: %s\n", ConfigPath)
+	log.Printf("重启目标容器: %s\n", DockerRestartTarget)
+	
+	server := &http.Server{
+		Addr:         Port,
+		Handler:      mux,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	
+	log.Fatal(server.ListenAndServe())
 }
