@@ -21,61 +21,70 @@ export const translations = {
       sys_load: "系统负载"
     },
     header: {
-      service_active: "服务正常",
-      service_stopped: "服务停止"
+      service_active: "核心在线",
+      service_stopped: "核心离线"
     },
     dashboard: {
-      traffic_analysis: "流量分析",
-      activity_log: "24小时活动记录",
-      node_info: "节点信息",
+      traffic_analysis: "流量趋势分析",
+      activity_log: "24H 活动实时记录",
+      node_info: "核心节点信息",
       config_path: "配置文件路径",
-      mem_usage: "内存占用",
-      restart_service: "重启服务",
-      mode: {
-        sidecar: "侧车模式",
-        standalone: "容器模式",
-        native: "宿主机模式"
-      }
+      mem_usage: "实时内存占用",
+      restart_service: "强制重启服务"
     },
     dns: {
-      ai_title: "AI 智能添加",
-      ai_desc: "描述您想添加的记录，例如：为 192.168.1.20 添加名为 pi.local 的记录",
-      ai_placeholder: "输入您的需求...",
-      ai_btn: "生成记录",
+      ai_title: "AI 智能解析助手",
+      ai_desc: "描述您的网络映射需求，AI 将自动为您生成 Dnsmasq 标准格式记录",
+      ai_placeholder: "例如：给我的 NAS 分配 nas.home 域名...",
+      ai_btn: "自动生成",
       domain: "域名",
-      ip: "IP 地址",
-      type: "类型",
-      desc: "备注",
-      manual_add: "手动添加记录"
+      ip: "目标 IP",
+      type: "记录类型",
+      desc: "备注信息",
+      manual_add: "手动添加解析项"
     },
     dhcp: {
-      title: "活动租约",
-      desc: "当前局域网中已分配的 IP 地址",
-      hostname: "主机名",
-      mac: "MAC 地址",
-      expires: "过期时间",
-      to_static: "转为静态",
-      release: "释放"
+      title: "终端地址分配",
+      desc: "当前局域网内由 Dnsmasq 分配的活动租约",
+      hostname: "设备主机名",
+      mac: "硬件地址",
+      expires: "有效时长",
+      to_static: "转静态绑定",
+      release: "释放地址"
     },
     config: {
-      ai_scan: "AI 智能审计",
-      apply_btn: "应用并重启",
-      valid: "配置合法且已应用",
-      invalid: "配置存在错误",
-      help_title: "快速参考",
-      ai_insight: "AI 智能解析",
-      security: "安全审计",
+      ai_scan: "AI 配置审计",
+      apply_btn: "保存并部署",
+      valid: "配置验证通过并已重载",
+      invalid: "配置格式错误",
+      help_title: "配置语法参考",
+      ai_insight: "AI 深度审计报告",
+      security: "安全性评分",
       optimization: "优化建议"
     },
     logs: {
-      title: "实时流量",
-      live: "实时",
-      filter: "过滤域名...",
-      clear: "清空日志",
-      time: "时间",
-      client: "客户端",
-      domain: "域名",
-      reply: "响应时间"
+      title: "全域流量监控",
+      live: "LIVE",
+      filter: "过滤访问域名...",
+      clear: "清除历史",
+      time: "请求时间",
+      client: "来源客户端",
+      domain: "访问域名",
+      reply: "处理时延"
+    },
+    ad_blocking: {
+      shield_title: "全域网络防火墙",
+      shield_desc: "基于 DNS 层的广告拦截与恶意域名过滤",
+      efficiency: "拦截效能",
+      optimal: "防御中",
+      blocking_stat: "当前已抵御 ~24% 的广告/追踪请求",
+      quick_control: "快捷指令",
+      sync_lists: "规则重载",
+      flush_cache: "清理 DNS 缓存",
+      managed_lists: "订阅规则源管理",
+      add_list: "新增订阅源",
+      active: "运行中",
+      disabled: "已禁用"
     }
   },
   en: {
@@ -85,7 +94,7 @@ export const translations = {
       delete: "Delete",
       edit: "Edit",
       save: "Save",
-      loading: "Processing...",
+      loading: "Loading...",
       search: "Search...",
       actions: "Actions",
       status: "Status"
@@ -95,66 +104,75 @@ export const translations = {
       dns_records: "DNS Records",
       dhcp_leases: "DHCP Leases",
       ad_blocking: "Ad Blocking",
-      config: "Configuration",
-      logs: "Traffic Logs",
-      sys_load: "System Load"
+      config: "Config Editor",
+      logs: "Query Logs",
+      sys_load: "Sys Load"
     },
     header: {
-      service_active: "Service Active",
-      service_stopped: "Service Stopped"
+      service_active: "Core Active",
+      service_stopped: "Core Offline"
     },
     dashboard: {
-      traffic_analysis: "Traffic Analysis",
-      activity_log: "24H Activity Log",
-      node_info: "Node Info",
+      traffic_analysis: "Traffic Trend Analysis",
+      activity_log: "24H Real-time Activity",
+      node_info: "Node Statistics",
       config_path: "Config Path",
       mem_usage: "Memory Usage",
-      restart_service: "Restart Service",
-      mode: {
-        sidecar: "Docker Sidecar",
-        standalone: "Standalone Container",
-        native: "Native Host"
-      }
+      restart_service: "Restart Service"
     },
     dns: {
-      ai_title: "AI Smart Add",
-      ai_desc: "Describe what you want, e.g., 'Add record for pi.local at 192.168.1.20'",
-      ai_placeholder: "Type your request...",
+      ai_title: "AI DNS Helper",
+      ai_desc: "Describe your needs, AI will generate standard dnsmasq records for you",
+      ai_placeholder: "e.g., set nas.local to 192.168.1.100...",
       ai_btn: "Generate",
       domain: "Domain",
       ip: "IP Address",
       type: "Type",
-      desc: "Description",
+      desc: "Comment",
       manual_add: "Add Record Manually"
     },
     dhcp: {
       title: "Active Leases",
-      desc: "Currently assigned IP addresses in the network",
+      desc: "IP addresses currently assigned via DHCP",
       hostname: "Hostname",
       mac: "MAC Address",
-      expires: "Expires In",
-      to_static: "Static",
+      expires: "Expires",
+      to_static: "To Static",
       release: "Release"
     },
     config: {
-      ai_scan: "AI Scan",
-      apply_btn: "Apply & Restart",
-      valid: "Config valid and applied",
-      invalid: "Config error detected",
-      help_title: "Quick Reference",
-      ai_insight: "AI Insight",
-      security: "Security Audit",
-      optimization: "Optimization"
+      ai_scan: "AI Security Scan",
+      apply_btn: "Save & Deploy",
+      valid: "Config valid and reloaded",
+      invalid: "Syntax error detected",
+      help_title: "Syntax Help",
+      ai_insight: "AI Audit Report",
+      security: "Security Score",
+      optimization: "Performance"
     },
     logs: {
-      title: "Live Traffic",
+      title: "Traffic Monitor",
       live: "LIVE",
       filter: "Filter domains...",
-      clear: "Clear Logs",
+      clear: "Clear All",
       time: "Time",
       client: "Client",
       domain: "Domain",
-      reply: "Reply Time"
+      reply: "Latency"
+    },
+    ad_blocking: {
+      shield_title: "Global Firewall",
+      shield_desc: "DNS-level ad blocking and tracker filtering",
+      efficiency: "Efficiency",
+      optimal: "Defending",
+      blocking_stat: "Blocking ~24% of all DNS queries",
+      quick_control: "Quick Commands",
+      sync_lists: "Sync Lists",
+      flush_cache: "Flush Cache",
+      managed_lists: "Blocklist Management",
+      add_list: "Add Source",
+      active: "Active",
+      disabled: "Disabled"
     }
   }
 };

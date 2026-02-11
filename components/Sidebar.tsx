@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from '../types';
-import { useTranslation } from '../App';
+import { useApp } from '../App';
 
 interface SidebarProps {
   currentView: View;
@@ -10,7 +10,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isOpen }) => {
-  const { t } = useTranslation();
+  const { t, theme } = useApp();
 
   const menuItems = [
     { id: View.DASHBOARD, label: t('nav.dashboard'), icon: (
@@ -33,45 +33,48 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isOpen }) 
     )},
   ];
 
+  const bgColor = theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-xl';
+  const logoColor = theme === 'dark' ? 'text-white' : 'text-slate-900';
+  const itemActiveColor = 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20';
+  const itemHoverColor = theme === 'dark' ? 'text-slate-400 hover:text-slate-100 hover:bg-slate-800' : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-50';
+
   return (
-    <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 transition-transform transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+    <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 border-r transition-all duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 ${bgColor}`}>
       <div className="p-6 h-full flex flex-col">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+        <div className="flex items-center gap-3 mb-10">
+          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
           </div>
           <div>
-            <h2 className="font-bold text-lg leading-tight text-white tracking-tight">Dnsmasq</h2>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Admin Pro</p>
+            <h2 className={`font-bold text-lg leading-tight tracking-tight transition-colors ${logoColor}`}>Dnsmasq</h2>
+            <p className="text-[10px] text-indigo-500 font-black uppercase tracking-widest">Admin Pro</p>
           </div>
         </div>
 
-        <nav className="space-y-1.5 flex-1">
+        <nav className="space-y-1 flex-1">
           {menuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => onViewChange(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
-                currentView === item.id 
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                currentView === item.id ? itemActiveColor : itemHoverColor
               }`}
             >
-              <span className={`transition-colors ${currentView === item.id ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`}>
+              <span className={`transition-colors ${currentView === item.id ? 'text-white' : 'text-slate-400 group-hover:text-indigo-500'}`}>
                 {item.icon}
               </span>
-              <span className="font-semibold text-sm">{item.label}</span>
+              <span className="font-bold text-sm">{item.label}</span>
             </button>
           ))}
         </nav>
 
-        <div className="mt-auto pt-6 border-t border-slate-800">
-          <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-            <p className="text-[10px] text-slate-500 mb-2 font-bold uppercase tracking-tighter">{t('nav.sys_load')}</p>
-            <div className="w-full bg-slate-700 h-1.5 rounded-full mb-3">
-              <div className="bg-indigo-500 h-full rounded-full w-1/3 transition-all duration-1000"></div>
+        <div className={`mt-auto pt-6 border-t transition-colors ${theme === 'dark' ? 'border-slate-800' : 'border-slate-100'}`}>
+          <div className={`rounded-xl p-4 border transition-all ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700/50' : 'bg-slate-50 border-slate-100'}`}>
+            <p className={`text-[10px] mb-2 font-black uppercase tracking-widest ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>{t('nav.sys_load')}</p>
+            <div className={`w-full h-1.5 rounded-full mb-3 transition-colors ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'}`}>
+              <div className="bg-indigo-500 h-full rounded-full w-1/3 shadow-[0_0_8px_rgba(99,102,241,0.4)]"></div>
             </div>
-            <p className="text-[10px] text-slate-400 font-mono tracking-tight">MEM: 42.5MB / 512MB</p>
+            <p className={`text-[10px] font-mono font-bold transition-colors ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>MEM: 42.5MB / 512MB</p>
           </div>
         </div>
       </div>
