@@ -1,6 +1,6 @@
 import React from 'react';
-import { View } from '../types';
-import { useApp } from '../App';
+import { View } from '../types.ts';
+import { useApp } from '../App.tsx';
 
 interface SidebarProps {
   currentView: View;

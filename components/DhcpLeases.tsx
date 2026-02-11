@@ -1,6 +1,6 @@
 import React from 'react';
-import { DhcpLease } from '../types';
-import { useTranslation } from '../App';
+import { DhcpLease } from '../types.ts';
+import { useTranslation } from '../App.tsx';
 
 const DhcpLeases: React.FC = () => {
   const { t } = useTranslation();

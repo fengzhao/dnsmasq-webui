@@ -1,8 +1,5 @@
 {
-  "name": "Dnsmasq Admin Pro (Containerized)",
-  "description": "基于侧车模式设计的双容器管理方案。支持跨容器配置热重载与 Docker 容器重启控制。",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
+  "name": "Dnsmasq Admin Pro (Complete)",
+  "description": "现代化 Dnsmasq 管理面板，支持双主题切换、AI 辅助配置与容器自动化重启。",
+  "requestFramePermissions": []
 }

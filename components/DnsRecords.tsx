@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { DnsRecord } from '../types';
-import { suggestDnsRecord } from '../services/geminiService';
-import { useTranslation } from '../App';
+import { DnsRecord } from '../types.ts';
+import { suggestDnsRecord } from '../services/geminiService.ts';
+import { useTranslation } from '../App.tsx';
 
 const DnsRecords: React.FC = () => {
   const { t } = useTranslation();

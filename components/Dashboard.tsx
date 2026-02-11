@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { SystemService, SystemStatus } from '../services/systemService';
-import { useApp } from '../App';
+import { SystemService, SystemStatus } from '../services/systemService.ts';
+import { useApp } from '../App.tsx';
 
 const Dashboard: React.FC = () => {
   const { t, theme } = useApp();

@@ -1,13 +1,13 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
-import { View } from './types';
-import { translations } from './translations';
-import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
-import DnsRecords from './components/DnsRecords';
-import DhcpLeases from './components/DhcpLeases';
-import AdBlocking from './components/AdBlocking';
-import ConfigEditor from './components/ConfigEditor';
-import LogsViewer from './components/LogsViewer';
+import { View } from './types.ts';
+import { translations } from './translations.ts';
+import Sidebar from './components/Sidebar.tsx';
+import Dashboard from './components/Dashboard.tsx';
+import DnsRecords from './components/DnsRecords.tsx';
+import DhcpLeases from './components/DhcpLeases.tsx';
+import AdBlocking from './components/AdBlocking.tsx';
+import ConfigEditor from './components/ConfigEditor.tsx';
+import LogsViewer from './components/LogsViewer.tsx';
 
 type Language = 'zh' | 'en';
 type Theme = 'dark' | 'light';
@@ -154,7 +154,6 @@ const App: React.FC = () => {
           </div>
         </main>
       </div>
-      {/* Fixed: changed closing tag from LanguageContext.Provider to AppContext.Provider */}
     </AppContext.Provider>
   );
 };

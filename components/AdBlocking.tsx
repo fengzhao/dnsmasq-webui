@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from '../App';
+import { useTranslation } from '../App.tsx';
 
 const AdBlocking: React.FC = () => {
   const { t } = useTranslation();

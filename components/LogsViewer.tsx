@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { QueryLog } from '../types';
-import { useTranslation } from '../App';
+import { QueryLog } from '../types.ts';
+import { useTranslation } from '../App.tsx';
 
 const LogsViewer: React.FC = () => {
   const { t } = useTranslation();

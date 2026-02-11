@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { analyzeConfig } from '../services/geminiService';
-import { SystemService } from '../services/systemService';
-import { useTranslation } from '../App';
+import { analyzeConfig } from '../services/geminiService.ts';
+import { SystemService } from '../services/systemService.ts';
+import { useTranslation } from '../App.tsx';
 
 const ConfigEditor: React.FC = () => {
   const { t } = useTranslation();
