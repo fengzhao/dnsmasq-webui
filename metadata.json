@@ -1,0 +1,8 @@
+{
+  "name": " Dnsmasq Admin Pro",
+  "description": "基于 Go 语言后端的高性能 dnsmasq 管理面板。支持实时服务控制、配置文件编辑与 AI 智能建议。",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
