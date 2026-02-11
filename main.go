@@ -1,10 +1,10 @@
-
 package main
 
 import (
 	"context"
 	"embed"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"io/fs"
@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 	"time"
 )
@@ -23,7 +22,7 @@ var staticFiles embed.FS
 
 var (
 	ConfigPath          = getEnv("DNSMASQ_CONF", "/etc/dnsmasq.conf")
-	Port                = getEnv("PORT", ":3000")
+	DefaultPort         = getEnv("PORT", ":3000")
 	DnsmasqBin          = getEnv("DNSMASQ_BIN", "dnsmasq")
 	DockerRestartTarget = getEnv("DOCKER_RESTART_TARGET", "")
 )
@@ -75,13 +74,12 @@ func restartDockerContainer(containerName string) error {
 }
 
 func handleStatus(w http.ResponseWriter, r *http.Request) {
-	isActive := true
 	mode := "host"
 	if DockerRestartTarget != "" {
 		mode = "docker-remote"
 	}
 	resp := StatusResponse{
-		Active:          isActive,
+		Active:          true,
 		Uptime:          "Running",
 		CPU:             0.2,
 		Memory:          42.5,
@@ -101,6 +99,7 @@ func handleConfig(w http.ResponseWriter, r *http.Request) {
 	}
 	body, _ := io.ReadAll(r.Body)
 	err := os.WriteFile(ConfigPath, body, 0644)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(Response{Success: err == nil})
 }
 
@@ -109,16 +108,20 @@ func handleRestart(w http.ResponseWriter, r *http.Request) {
 	if DockerRestartTarget != "" {
 		err = restartDockerContainer(DockerRestartTarget)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(Response{Success: err == nil})
 }
 
 func handleTestConfig(w http.ResponseWriter, r *http.Request) {
 	body, _ := io.ReadAll(r.Body)
 	tmpFile := "/tmp/dnsmasq_test.conf"
-	os.WriteFile(tmpFile, body, 0644)
+	_ = os.WriteFile(tmpFile, body, 0644)
 	defer os.Remove(tmpFile)
+
 	cmd := exec.Command(DnsmasqBin, "--test", "--conf-file="+tmpFile)
 	output, err := cmd.CombinedOutput()
+	
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"valid": err == nil,
 		"error": string(output),
@@ -126,13 +129,17 @@ func handleTestConfig(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// --- 命令行参数解析 ---
+	serverAddr := flag.String("server", DefaultPort, "HTTP service address (e.g. :3000)")
+	flag.Parse()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/status", handleStatus)
 	mux.HandleFunc("/api/restart", handleRestart)
 	mux.HandleFunc("/api/config", handleConfig)
 	mux.HandleFunc("/api/test-config", handleTestConfig)
 
-	// 使用静态文件系统服务前端
+	// 静态文件服务
 	contentStatic, _ := fs.Sub(staticFiles, ".")
 	fileServer := http.FileServer(http.FS(contentStatic))
 
@@ -144,6 +151,12 @@ func main() {
 		fileServer.ServeHTTP(w, r)
 	}))
 
-	log.Printf("Dnsmasq Admin Pro (Embedded) started on %s\n", Port)
-	log.Fatal(http.ListenAndServe(Port, mux))
+	log.Printf("Dnsmasq Admin Pro (Embedded) started on %s\n", *serverAddr)
+	log.Printf("Config Path: %s\n", ConfigPath)
+	
+	server := &http.Server{
+		Addr:    *serverAddr,
+		Handler: mux,
+	}
+	log.Fatal(server.ListenAndServe())
 }
