@@ -1,0 +1,30 @@
+# --- 构建阶段 ---
+FROM golang:1.23-alpine AS builder
+
+WORKDIR /app
+
+# 设置代理加速
+ENV GOPROXY=https://goproxy.cn,direct
+
+# 直接复制单文件 (假设你的文件叫 main.go)
+COPY main.go .
+
+# 初始化 mod（单文件也需要 go.mod 才能构建，这里直接通过命令生成）
+RUN go mod init my-app && go mod tidy
+
+# 编译成静态二进制文件
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o server main.go
+
+# --- 运行阶段 ---
+FROM alpine:latest
+
+# 如果你的代码里有访问外部 HTTPS 接口，这个必带
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+# 只把编译好的二进制拿过来
+COPY --from=builder /app/server .
+
+# 运行
+CMD ["./server"]
